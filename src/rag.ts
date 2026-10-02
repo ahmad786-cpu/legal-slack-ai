@@ -11,7 +11,7 @@ export async function answer(team: string, channel: string, question: string, hi
   // Fold the latest thread turns into the search so follow-ups ("and when is that due?") still find the right clauses.
   const searchText = [...history.slice(-2).map((t) => t.text), question].join('\n');
   const hits = await search(team, channel, searchText);
-  const brief = store.getBrief(channel);
+  const brief = await store.getBrief(channel);
 
   if (!hits.length && !brief) {
     return {

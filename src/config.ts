@@ -15,7 +15,9 @@ const embedProvider = (env.EMBED_PROVIDER || (openaiKey ? 'openai' : 'pinecone')
 export const config = {
   slack: {
     botToken: required('SLACK_BOT_TOKEN'),
-    appToken: required('SLACK_APP_TOKEN'),
+    // Socket Mode (running on your own machine) uses the app token; HTTP mode (Vercel) uses the signing secret.
+    appToken: env.SLACK_APP_TOKEN?.trim() || '',
+    signingSecret: env.SLACK_SIGNING_SECRET?.trim() || '',
   },
   embed: {
     provider: embedProvider,
@@ -48,6 +50,11 @@ export const config = {
     analysisChars: Number(env.ANALYSIS_CHARS || 16_000),
     searchTopK: Number(env.SEARCH_TOP_K || 5),
     draftMaxTokens: Number(env.DRAFT_MAX_TOKENS || 2500),
+  },
+  // Document list and matter briefs. Required on Vercel; without it a local JSON file is used.
+  supabase: {
+    url: (env.SUPABASE_URL || '').replace(/\/+$/, ''),
+    serviceKey: env.SUPABASE_SERVICE_ROLE_KEY || '',
   },
   timezone: env.TIMEZONE || 'UTC',
   dataFile: env.DATA_FILE || './data/store.json',

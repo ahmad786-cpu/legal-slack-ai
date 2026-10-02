@@ -17,7 +17,7 @@ export async function draftDocument(team: string, channel: string, request: stri
     'Format: first line "# Title", then "## Heading" for sections and plain paragraphs. No commentary before or after the draft.',
     DOCUMENT_SAFETY,
   ].join('\n');
-  const user = `Matter brief:\n${store.getBrief(channel) || '(none)'}\n\n${sources || '(no matching documents)'}\n\nDraft this: ${request}`;
+  const user = `Matter brief:\n${(await store.getBrief(channel)) || '(none)'}\n\n${sources || '(no matching documents)'}\n\nDraft this: ${request}`;
   const markdown = await chat(system, user, { maxTokens: config.limits.draftMaxTokens });
   const title = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim() || 'Draft';
   return { title, markdown, docx: await toDocx(title, markdown), sources: files };

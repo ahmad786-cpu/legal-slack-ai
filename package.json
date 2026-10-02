@@ -19,6 +19,8 @@
     "@slack/bolt": "^5.1.0",
     "@slack/types": "^3.2.0",
     "@slack/web-api": "^8.2.0",
+    "@supabase/supabase-js": "^2.117.2",
+    "@vercel/functions": "^3.9.10",
     "docx": "^9.8.1",
     "dotenv": "^18.0.5",
     "google-auth-library": "^11.1.0",

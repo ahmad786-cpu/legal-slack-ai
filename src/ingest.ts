@@ -27,10 +27,10 @@ export async function ingest(
   const id = crypto.randomUUID();
   await upsertChunks(team, id, channel, fileName, chunks);
   const analysis: Analysis = await analyzeDocument(fileName, text);
-  store.saveBrief(channel, await updateBrief(store.getBrief(channel), fileName, analysis));
+  await store.saveBrief(channel, await updateBrief(await store.getBrief(channel), fileName, analysis));
 
   const doc: DocRecord = { id, channel, fileName, kind, uploadedBy, uploadedAt: Date.now(), chunks: chunks.length, analysis };
-  store.saveDoc(doc);
+  await store.saveDoc(doc);
 
   const children: Ingested[] = [];
   for (const a of attachments) {

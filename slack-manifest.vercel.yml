@@ -1,0 +1,44 @@
+# For the Vercel deployment (HTTP mode). Replace YOUR-APP.vercel.app with your deployment's address, then
+# Slack app > App Manifest > paste this > Save. (slack-manifest.yml is the Socket Mode version for running locally.)
+display_information:
+  name: Legal AI
+  description: Reads your legal documents, answers questions with sources, tracks deadlines and drafts documents.
+  background_color: "#03091a"
+features:
+  bot_user:
+    display_name: Legal AI
+    always_online: true
+  app_home:
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  slash_commands:
+    - command: /legal
+      description: Matter brief, documents, drafts and scheduling
+      usage_hint: "brief | docs | ask <question> | draft <what> | schedule <event> | forget <n>"
+      should_escape: false
+      url: https://YOUR-APP.vercel.app/api/slack
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - groups:history
+      - im:history
+      - chat:write
+      - commands
+      - files:read
+      - files:write
+settings:
+  event_subscriptions:
+    request_url: https://YOUR-APP.vercel.app/api/slack
+    bot_events:
+      - app_mention
+      - message.channels
+      - message.groups
+      - message.im
+  interactivity:
+    is_enabled: true
+    request_url: https://YOUR-APP.vercel.app/api/slack
+  socket_mode_enabled: false
+  org_deploy_enabled: false
+  token_rotation_enabled: false
