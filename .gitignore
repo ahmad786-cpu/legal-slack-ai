@@ -1,0 +1,6 @@
+node_modules/
+data/
+.env*
+!.env.example
+*.json.tmp
+service-account*.json

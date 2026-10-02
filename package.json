@@ -1,0 +1,36 @@
+{
+  "name": "legal-slack-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Slack bot for legal teams: document ingestion, RAG answers, matter briefs, calendar deadlines and DOCX drafts.",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@googleapis/calendar": "^20.0.1",
+    "@pinecone-database/pinecone": "^9.0.0",
+    "@slack/bolt": "^5.1.0",
+    "@slack/types": "^3.2.0",
+    "@slack/web-api": "^8.2.0",
+    "docx": "^9.8.1",
+    "dotenv": "^18.0.5",
+    "google-auth-library": "^11.1.0",
+    "mailparser": "^3.9.33",
+    "mammoth": "^1.13.0",
+    "openai": "^7.27.0",
+    "unpdf": "^1.8.1"
+  },
+  "devDependencies": {
+    "@types/mailparser": "^3.9.0",
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

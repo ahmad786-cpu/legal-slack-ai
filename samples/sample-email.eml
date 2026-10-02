@@ -1,0 +1,24 @@
+From: Maya Chen <maya.chen@northwind.example>
+To: Legal Team <legal@bluebird.example>
+Subject: Rent arrears and settlement offer (sample)
+Date: Mon, 05 Oct 2026 09:30:00 +0000
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="b1"
+
+--b1
+Content-Type: text/plain; charset=utf-8
+
+Hello,
+
+The September rent is unpaid. Please pay the arrears of 4,500 USD by 15 October 2026 or we will issue a formal notice.
+Our settlement offer is attached.
+
+Maya Chen
+Northwind Properties (fictional)
+--b1
+Content-Type: text/plain; name="settlement-offer.txt"
+Content-Disposition: attachment; filename="settlement-offer.txt"
+Content-Transfer-Encoding: base64
+
+V2l0aG91dCBwcmVqdWRpY2Ugc2V0dGxlbWVudCBvZmZlciAoc2FtcGxlKQpOb3J0aHdpbmQgUHJvcGVydGllcyBvZmZlcnMgdG8gd2FpdmUgMiBtb250aHMgb2YgbGF0ZSBmZWVzICg5MDAgVVNEKSBpZiBhbGwgYXJyZWFycyBhcmUgcGFpZCBieSAyMCBOb3ZlbWJlciAyMDI2LgpUaGlzIG9mZmVyIGV4cGlyZXMgb24gMjAgTm92ZW1iZXIgMjAyNiBhdCAxNzowMC4=
+--b1--
