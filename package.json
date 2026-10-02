@@ -11,7 +11,7 @@
     "test": "tsx --test test/*.test.ts"
   },
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "dependencies": {
     "@googleapis/calendar": "^20.0.1",
@@ -33,6 +33,6 @@
     "@types/mailparser": "^3.9.0",
     "@types/node": "^26.6.4",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3"
   }
 }
