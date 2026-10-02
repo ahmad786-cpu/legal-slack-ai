@@ -44,9 +44,12 @@ export function analysisBlocks(doc: Ingested): KnownBlock[] {
   return blocks;
 }
 
-export function answerBlocks(text: string, sources: string[]): KnownBlock[] {
+// `numbering` is the order the answer's [n] citations refer to; sources may be a cited subset of it.
+export function answerBlocks(text: string, sources: string[], numbering: string[] = sources): KnownBlock[] {
   const blocks: KnownBlock[] = [section(text || '_No answer._')];
-  if (sources.length) blocks.push(footer(`Sources: ${sources.map((s, i) => `[${i + 1}] ${s}`).join(' · ')}`));
+  if (sources.length) {
+    blocks.push(footer(`Sources: ${sources.map((s) => `[${numbering.indexOf(s) + 1}] ${s}`).join(' · ')}`));
+  }
   blocks.push(footer(`_${NOT_ADVICE}_`));
   return blocks;
 }

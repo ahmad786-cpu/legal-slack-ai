@@ -1,8 +1,8 @@
-import { chat, DOCUMENT_SAFETY, NOT_ADVICE } from './ai.js';
+import { chat, DOCUMENT_SAFETY, NOT_ADVICE, slackify } from './ai.js';
 import { store } from './store.js';
 import { search } from './vectors.js';
 
-export type Answer = { text: string; sources: string[] };
+export type Answer = { text: string; sources: string[]; numbering?: string[] };
 
 export type Turn = { role: 'user' | 'assistant'; text: string };
 
@@ -10,7 +10,7 @@ export type Turn = { role: 'user' | 'assistant'; text: string };
 export async function answer(team: string, channel: string, question: string, history: Turn[] = []): Promise<Answer> {
   // Fold the latest thread turns into the search so follow-ups ("and when is that due?") still find the right clauses.
   const searchText = [...history.slice(-2).map((t) => t.text), question].join('\n');
-  const hits = await search(team, channel, searchText, 8);
+  const hits = await search(team, channel, searchText);
   const brief = store.getBrief(channel);
 
   if (!hits.length && !brief) {
@@ -37,5 +37,8 @@ export async function answer(team: string, channel: string, question: string, hi
     ? `Earlier in this thread:\n${history.slice(-6).map((t) => `${t.role === 'user' ? 'Team' : 'You'}: ${t.text}`).join('\n')}\n\n`
     : '';
   const user = `Matter brief:\n${brief || '(none yet)'}\n\n${sources}\n\n${thread}Question: ${question}`;
-  return { text: await chat(system, user), sources: files };
+  const text = slackify(await chat(system, user));
+  // List only the sources the answer cites; fall back to all of them if it cites none.
+  const cited = files.filter((_, i) => text.includes(`[${i + 1}]`));
+  return { text, sources: cited.length ? cited : files, numbering: files };
 }

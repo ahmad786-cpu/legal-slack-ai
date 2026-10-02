@@ -8,7 +8,7 @@ try {
   const auth = await identify();
   await app.start();
   console.log(`Legal AI is running in Slack workspace "${auth.team}" as @${auth.user}`);
-  console.log(`  models:   chat ${config.llm.model}, embeddings ${config.openai.embedModel}`);
+  console.log(`  models:   chat ${config.llm.model}, images ${config.llm.visionModel}, embeddings ${config.embed.model} (${config.embed.provider})`);
   console.log(`  pinecone: index "${config.pinecone.index}"`);
   console.log(`  calendar: ${calendarEnabled ? config.google.calendarId : 'off (set GOOGLE_CALENDAR_ID and a service account)'}`);
 } catch (err) {

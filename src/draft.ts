@@ -1,5 +1,6 @@
 import { AlignmentType, Document, HeadingLevel, Packer, Paragraph, TextRun } from 'docx';
 import { chat, DOCUMENT_SAFETY, NOT_ADVICE } from './ai.js';
+import { config } from './config.js';
 import { store } from './store.js';
 import { search } from './vectors.js';
 
@@ -7,7 +8,7 @@ export type Draft = { title: string; markdown: string; docx: Buffer; sources: st
 
 // Writes a first draft (letter, notice, clause, memo) grounded in the channel's documents.
 export async function draftDocument(team: string, channel: string, request: string): Promise<Draft> {
-  const hits = await search(team, channel, request, 8);
+  const hits = await search(team, channel, request);
   const files = [...new Set(hits.map((h) => h.fileName))];
   const sources = hits.map((h) => `<source file="${h.fileName}">\n${h.text}\n</source>`).join('\n\n');
   const system = [
@@ -17,7 +18,7 @@ export async function draftDocument(team: string, channel: string, request: stri
     DOCUMENT_SAFETY,
   ].join('\n');
   const user = `Matter brief:\n${store.getBrief(channel) || '(none)'}\n\n${sources || '(no matching documents)'}\n\nDraft this: ${request}`;
-  const markdown = await chat(system, user, { maxTokens: 4000 });
+  const markdown = await chat(system, user, { maxTokens: config.limits.draftMaxTokens });
   const title = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim() || 'Draft';
   return { title, markdown, docx: await toDocx(title, markdown), sources: files };
 }

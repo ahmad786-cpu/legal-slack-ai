@@ -2,26 +2,31 @@ import 'dotenv/config';
 
 const env = process.env;
 
-function required(name: string): string {
-  const value = env[name]?.trim();
-  if (!value) throw new Error(`Missing ${name} in .env (see .env.example).`);
-  return value;
+function required(name: string, value = env[name]): string {
+  const v = value?.trim();
+  if (!v) throw new Error(`Missing ${name} in .env (see .env.example).`);
+  return v;
 }
+
+const openaiKey = env.OPENAI_API_KEY?.trim() || '';
+// Embeddings come from OpenAI when a key is set, otherwise from Pinecone's hosted model (free tier).
+const embedProvider = (env.EMBED_PROVIDER || (openaiKey ? 'openai' : 'pinecone')) as 'openai' | 'pinecone';
 
 export const config = {
   slack: {
     botToken: required('SLACK_BOT_TOKEN'),
     appToken: required('SLACK_APP_TOKEN'),
   },
-  openai: {
-    apiKey: required('OPENAI_API_KEY'),
-    embedModel: env.OPENAI_EMBED_MODEL || 'text-embedding-3-small',
-    embedDimensions: Number(env.OPENAI_EMBED_DIMENSIONS || 1536),
+  embed: {
+    provider: embedProvider,
+    openaiKey: embedProvider === 'openai' ? required('OPENAI_API_KEY') : '',
+    model: env.EMBED_MODEL || (embedProvider === 'openai' ? 'text-embedding-3-small' : 'llama-text-embed-v2'),
+    dimensions: Number(env.EMBED_DIMENSIONS || (embedProvider === 'openai' ? 1536 : 1024)),
   },
-  // Chat, analysis and drafting. Defaults to OpenAI; any OpenAI-compatible endpoint works.
+  // Chat, analysis and drafting: OpenAI, or any OpenAI-compatible endpoint such as Groq.
   llm: {
     baseUrl: env.LLM_BASE_URL || undefined,
-    apiKey: env.LLM_API_KEY || env.OPENAI_API_KEY || '',
+    apiKey: required('LLM_API_KEY', env.LLM_API_KEY || openaiKey),
     model: required('LLM_MODEL'),
     // Reads text from images. Must accept image input.
     visionModel: env.VISION_MODEL || env.LLM_MODEL || '',
@@ -37,6 +42,12 @@ export const config = {
     serviceAccountJson: env.GOOGLE_SERVICE_ACCOUNT_JSON || '',
     serviceAccountFile: env.GOOGLE_SERVICE_ACCOUNT_FILE || '',
     calendarId: env.GOOGLE_CALENDAR_ID || '',
+  },
+  // Prompt sizes. The defaults fit free-tier limits (about 8,000 tokens a minute); raise them on paid plans.
+  limits: {
+    analysisChars: Number(env.ANALYSIS_CHARS || 16_000),
+    searchTopK: Number(env.SEARCH_TOP_K || 5),
+    draftMaxTokens: Number(env.DRAFT_MAX_TOKENS || 2500),
   },
   timezone: env.TIMEZONE || 'UTC',
   dataFile: env.DATA_FILE || './data/store.json',

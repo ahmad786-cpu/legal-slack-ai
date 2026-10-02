@@ -77,7 +77,7 @@ async function replyToQuestion(client: WebClient, team: string, channel: string,
   try {
     const history = threadTs ? await threadHistory(client, channel, threadTs, ts) : [];
     const res = await answer(team, channel, question, history);
-    await client.chat.update({ channel, ts: status.ts as string, text: res.text, blocks: answerBlocks(res.text, res.sources) });
+    await client.chat.update({ channel, ts: status.ts as string, text: res.text, blocks: answerBlocks(res.text, res.sources, res.numbering) });
   } catch (err) {
     console.error('[ask]', err);
     await client.chat.update({ channel, ts: status.ts as string, text: errorText(err) });
@@ -136,7 +136,7 @@ app.command('/legal', async ({ command, ack, respond, client, context }) => {
         if (!rest) throw new Error('Add a question, e.g. `/legal ask what is the termination notice period?`');
         await respond({ response_type: 'ephemeral', text: '🔎 Searching…' });
         const res = await answer(team, channel, rest);
-        await respond({ response_type: 'in_channel', replace_original: false, text: res.text, blocks: answerBlocks(`*Q:* ${rest}\n\n${res.text}`, res.sources) });
+        await respond({ response_type: 'in_channel', replace_original: false, text: res.text, blocks: answerBlocks(`*Q:* ${rest}\n\n${res.text}`, res.sources, res.numbering) });
         return;
       }
       case 'draft': {

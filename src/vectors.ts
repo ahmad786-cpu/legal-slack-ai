@@ -17,7 +17,7 @@ const index = () => pc.index<ChunkMeta>(config.pinecone.index);
 export async function ensureIndex() {
   await pc.createIndex({
     name: config.pinecone.index,
-    dimension: config.openai.embedDimensions,
+    dimension: config.embed.dimensions,
     metric: 'cosine',
     spec: { serverless: { cloud: config.pinecone.cloud, region: config.pinecone.region } },
     waitUntilReady: true,
@@ -27,7 +27,7 @@ export async function ensureIndex() {
 
 // One namespace per Slack workspace; each channel is a matter, kept apart by a metadata filter.
 export async function upsertChunks(team: string, docId: string, channel: string, fileName: string, chunks: string[]) {
-  const vectors = await embed(chunks);
+  const vectors = await embed(chunks, 'passage');
   const records = vectors.map((values, i) => ({
     id: `${docId}#${i}`,
     values,
@@ -38,8 +38,8 @@ export async function upsertChunks(team: string, docId: string, channel: string,
   }
 }
 
-export async function search(team: string, channel: string, query: string, topK = 8): Promise<(ChunkMeta & { score: number })[]> {
-  const [vector] = await embed([query]);
+export async function search(team: string, channel: string, query: string, topK = config.limits.searchTopK): Promise<(ChunkMeta & { score: number })[]> {
+  const [vector] = await embed([query], 'query');
   const res = await index().query({
     vector,
     topK,
